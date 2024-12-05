@@ -7,7 +7,7 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
+    <ItemGroup> 
       <None Update="input.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>

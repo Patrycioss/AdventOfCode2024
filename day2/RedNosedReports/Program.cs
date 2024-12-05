@@ -1,8 +1,4 @@
-﻿using System.Text;
-
-var lines = File.ReadAllLines("input.txt");
-
-int safeCount = 0;
+﻿var lines = File.ReadAllLines("input.txt");
 
 var testLines = new List<string>()
 {
@@ -14,77 +10,92 @@ var testLines = new List<string>()
     "1 3 6 7 9", // safe
 };
 
-
-for (int i = 0; i < lines.Length; i++)
-{
-    var numStrings = lines[i].Split(" ", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-    List<int> numbers = new List<int>();
-    int first = int.Parse(numStrings[0]);
-    int second = int.Parse(numStrings[1]);
-    
-    numbers.Add(first);
-    numbers.Add(second);
-
-    bool safe = true;
-
-    int currentDifference = second - first;
-    if (currentDifference == 0 || MathF.Abs(currentDifference) > 3)
-    {
-        safe = false;
-    }
-
-    bool shouldBeIncreasing = currentDifference > 0;
-
-    for (var index = 2; index < numStrings.Length; index++)
-    {
-        first = second;
-        second = int.Parse(numStrings[index]);
-        numbers.Add(second);
-
-        currentDifference = second - first;
-
-        if (currentDifference == 0)
-        {
-            safe = false;
-            break;
-        }
-
-        if (currentDifference < 0 && shouldBeIncreasing)
-        {
-            safe = false;
-            break;
-        }
-
-        if (currentDifference > 0 && !shouldBeIncreasing)
-        {
-            safe = false;
-            break;
-        }
-
-
-        int absDifference = Math.Abs(currentDifference);
-
-        if (absDifference > 3)
-        {
-            safe = false;
-            break;
-        }
-    }
-
-    if (safe)
-    {
-        safeCount++;
-    }
-    
-    StringBuilder stringBuilder = new StringBuilder();
-    stringBuilder.Append($"{i}:");
-    foreach (var number in numbers)
-    {
-        stringBuilder.Append($"-{number}-");
-    }
-    stringBuilder.Append(safe? "Is Safe" : "Is Not Safe");
-    Console.WriteLine(stringBuilder.ToString());
-}
+int safeCount = Part2(lines);
 
 Console.WriteLine($"Safe count: {safeCount}");
+return;
+
+
+int[] ParseNumbers(string line)
+{
+    return line.Split(" ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(int.Parse)
+        .ToArray();
+}
+
+bool IsSafe(int[] sequence)
+{
+    int previous = -1;
+
+    bool shouldBeIncreasing = sequence[0] < sequence[1];
+
+    foreach (int current in sequence)
+    {
+        if (previous > 0)
+        {
+            int difference = previous - current;
+
+            if (MathF.Abs(difference) is > 3 or 0)
+            {
+                return false;
+            }
+
+            if (difference > 0 && shouldBeIncreasing)
+            {
+                return false;
+            }
+
+            if (difference < 0 && !shouldBeIncreasing)
+            {
+                return false;
+            }
+        }
+
+        previous = current;
+    }
+
+    return true;
+}
+
+
+int Part2(string[] strings)
+{
+    int count = 0;
+
+    foreach (string str in strings)
+    {
+        int[] numbers = ParseNumbers(str);
+        if (!IsSafe(numbers))
+        {
+            for (int i = 0; i < numbers.Length; i++)
+            {
+                List<int> newNumbers = [..numbers];
+                newNumbers.RemoveAt(i);
+
+                if (IsSafe(newNumbers.ToArray()))
+                {
+                    count++;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+
+int Part1(string[] strings)
+{
+    int count = 0;
+
+    foreach (string str in strings)
+    {
+        count += IsSafe(ParseNumbers(str)) ? 1 : 0;
+    }
+
+    return count;
+}
