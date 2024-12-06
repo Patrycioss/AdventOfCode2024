@@ -5,6 +5,7 @@ version: 0.0.1
 
 assets:
   - input/input.txt
+  - input/input_test.txt
 
 environment:
   sdk: ^3.5.4
