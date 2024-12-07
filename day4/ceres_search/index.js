@@ -5,10 +5,6 @@ start();
 function part1(input) {
     const lines = input.split("\n");
 
-    for (const line in lines) {
-        console.log(lines[line]);
-    }
-
     let grid = [];
     let rows = lines.length;
     let columns = lines[0].trim().length;
@@ -21,23 +17,10 @@ function part1(input) {
         }
     }
 
-
     function is_valid(x, y) {
-        let works = (x >= 0 && x < columns) && (y >= 0 && y < rows);
-        console.log(`x: ${x} y: ${y} works? ${works}`);
-        return works;
+        return (x >= 0 && x < columns) && (y >= 0 && y < rows);
     }
 
-    function try_location(x, y, letter, onFound) {
-        if (is_valid(x, y)) {
-            console.log(grid[x][y])
-            console.log(letter)
-            if (grid[x][y] === letter) {
-                console.log("Found letter!")
-                onFound(x, y)
-            }
-        }
-    }
 
     const word = "XMAS";
 
@@ -47,11 +30,10 @@ function part1(input) {
             const x = fromX + (dirX * index);
             const y = fromY + (dirY * index);
             if (is_valid(x, y)) {
-                if (!(grid[x][y] === word[index])){
+                if (!(grid[x][y] === word[index])) {
                     return false;
-                } 
-            }
-            else {
+                }
+            } else {
                 return false;
             }
         }
@@ -69,44 +51,22 @@ function part1(input) {
         if (try_direction(x, y, -1, 1)) onFound(); // BL
         if (try_direction(x, y, -1, 0)) onFound(); // L
     }
-
-
-    function look_around(fromX, fromY, letter, onFound) {
-        try_location(fromX - 1, fromY - 1, letter, onFound); // TL
-        try_location(fromX, fromY - 1, letter, onFound); // T
-        try_location(fromX + 1, fromY - 1, letter, onFound); // TR
-        try_location(fromX + 1, fromY, letter, onFound); // R
-        try_location(fromX + 1, fromY + 1, letter, onFound); // BR
-        try_location(fromX, fromY + 1, letter, onFound); // B
-        try_location(fromX - 1, fromY + 1, letter, onFound); // BL
-        try_location(fromX - 1, fromY, letter, onFound); // L
-    }
-
-    // look_for(0, 0, "M", (x, y) => {
-    //     look_for(x, y, "A", (x, y) => {
-    //         look_for(x, y, "S", () => {
-    //             console.log("Found something!");
-    //         })
-    //     })
-    // });
-
+    
     let count = 0;
 
     for (let x = 0; x < columns; x++) {
         for (let y = 0; y < rows; y++) {
-            // console.log(`${x}, ${y}: ${grid[x][y]}`)
-
             if (grid[x][y] === "X") {
                 try_all_directions(x, y, () => {
-                    console.log("found");
                     count++;
                 });
             }
         }
     }
+    console.log(`Part 1 Count: ${count}`);
+}
 
-    console.log(`Count: ${count}`);
-
+function part2(input) {
 
 }
 
